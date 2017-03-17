@@ -73,14 +73,39 @@ function TestBuildTaskPrerequisites
 
 function New-TfsBuildTask
 {
-	[OutputType()]
+	<#
+		.SYNOPSIS
+			This function creates a TFS build task from a local folder. The folder contents must contain all of the
+			required components in order to successfully create a build task. Before creation, all of these prereqs
+			are tested.
+	
+		.EXAMPLE
+			PS> New-TfsBuildTask -FolderPath C:\BuildTask -TfsUrl http:\\tfs:8080
+
+		.PARAMETER FolderPath
+			 A mandatory string parameter representing the path to the folder containing the build task contents.
+
+		.PARAMETER TfsUrl
+			 A mandatory string parameter representing the URL to the TFS server. This is typically in the form of
+			 http://<Server>:8080.
+
+		.PARAMETER Overwrite
+			 A optional	switch parameter that forces an overwrite of an existing build task if one exists. By default,
+			 the function will not overwrite any existing task.
+
+		.PARAMETER Credential
+			 A optional pscredential parameter representing an alternate credential to authenticate to the TFS server.
+			 By default, this function uses the currently logged on user's credentials.
+	
+	#>
+	[OutputType([void])]
 	[CmdletBinding()]
 		param(
 		[Parameter(Mandatory)]
 		[ValidateNotNullOrEmpty()]
 		[ValidateScript({ 
 			if (-not (Test-Path -Path $_ -PathType Container)) {
-				throw "The folder '$($_)' is not available"
+				throw "The folder '$_' is not available"
 			}
 			$true
 		
